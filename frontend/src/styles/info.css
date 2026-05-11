@@ -1,0 +1,86 @@
+.page-container {
+  padding: 20px 40px;
+  font-family: sans-serif;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.header-actions {
+  display: grid;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.info-item {
+    text-align: center;
+    flex: 1;
+}
+
+.info-actions {
+    margin: 20px auto 0;
+    text-align: right;
+}
+
+.close {
+    margin: 0;
+}
+
+.edit-btn {
+  padding: 8px 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: sans-serif;
+}
+
+.edit-btn:hover {
+  text-decoration: underline;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  width: 700px;
+  max-width: 90%;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.confirm-container {
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: 15px; /* align with inputs */
+  justify-content: space-between;
+}
+
+.cancel-btn {
+  text-align: left;
+  margin-top: auto; /* Push to bottom */
+}
+
+.confirm-btn {
+  background: none;
+  border: none;
+  padding: 10px 20px;
+  border: none;
+}
+
+.check-box {
+  padding: 8px 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  font-family: sans-serif;
+}

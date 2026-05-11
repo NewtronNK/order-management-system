@@ -1,0 +1,103 @@
+.sender-address {
+    margin-left: 10px;
+    text-decoration: underline;
+}
+
+.select-card {
+    margin-top: 7px;
+}
+
+.form-group label {
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+}
+
+.right-col {
+  flex: 2;
+}
+
+.row {
+  display: flex;
+  gap: 20px;
+}
+
+.half {
+  flex: 1;
+}
+
+.full-width {
+  width: 100%;
+}
+
+input[type="text"],
+input[type="email"],
+select,
+textarea {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: sans-serif;
+}
+
+.form-layout {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 30px;
+}
+
+.center-layout {
+  flex-direction: column;
+  gap: 15px;
+  max-width: 600px;
+  margin: 0 auto 30px;
+}
+
+.confirm-container {
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: 15px; /* align with inputs */
+  justify-content: space-between;
+}
+
+.form-group {
+  margin-top: 10px;
+}
+
+.form-group2 {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  font-family: sans-serif;
+}
+
+.cancel-btn {
+  text-align: left;
+  margin-top: auto; /* Push to bottom */
+}
+
+.hide-btn {
+  text-decoration: underline;
+}
+
+.sender-info {
+  /* justify-content: center;
+  justify-items: center; */
+  align-items: flex-end;
+  /* display: flex; */
+  padding: 20px;
+}
+
+.page-container {
+  padding: 20px 40px;
+  font-family: sans-serif;
+  max-width: 1000px;
+  margin: 0 auto;
+  align-items: flex-end;
+}

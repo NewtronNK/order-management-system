@@ -1,0 +1,17 @@
+services:
+  api:
+    build: .
+    container_name: nestjs_api
+    restart: always
+    ports:
+      - "${PORT}:${PORT}" 
+    env_file:
+      - .env
+    environment:
+      CHOKIDAR_USEPOLLING: true
+      MONGODB_URI: ${MONGODB_URI}
+      PORT: ${PORT}
+      NODE_ENV: development
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
