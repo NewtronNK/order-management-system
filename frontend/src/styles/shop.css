@@ -158,3 +158,25 @@ textarea {
 .btn:hover {
   text-decoration: underline;
 }
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .shop-page {
+    padding: 10px;
+  }
+  .form-layout, .row {
+    flex-direction: column;
+    gap: 15px;
+  }
+  .left-col, .upload-pic {
+    width: 100%;
+  }
+  .sub-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .checkbox-container {
+    justify-content: flex-start;
+  }
+}

@@ -6,7 +6,7 @@ export type ShopDocument = Shop & Document;
 @Schema()
 class Address {
     @Prop()
-    shopName?: string;
+    name?: string;
 
     @Prop({ default: '?' })
     detail?: string;

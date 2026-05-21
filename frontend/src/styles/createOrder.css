@@ -101,3 +101,159 @@ textarea {
   margin: 0 auto;
   align-items: flex-end;
 }
+
+.close-right {
+  align-items: flex-end;
+  text-align: right;
+}
+
+/* ── Confirmed product list table ── */
+.product-list-table {
+  width: auto;
+  border-collapse: collapse;
+  margin-top: 8px;
+  font-size: 0.9rem;
+}
+
+.product-list-table th,
+.product-list-table td {
+  padding: 6px 16px 6px 0;
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.product-list-table th {
+  font-weight: 600;
+  border-bottom: 1px solid #ccc;
+}
+
+/* ── Product modal ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-box {
+  background: #fff;
+  border-radius: 8px;
+  display: flex;
+  width: 860px;
+  max-width: 95vw;
+  max-height: 80vh;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+}
+
+.modal-left,
+.modal-right {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  gap: 10px;
+}
+
+.modal-divider {
+  width: 1px;
+  background: #e0e0e0;
+  align-self: stretch;
+}
+
+.modal-product-row,
+.modal-selected-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid #f0f0f0;
+  gap: 10px;
+}
+
+.modal-product-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.modal-product-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.product-code {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.mid {
+  align-items: center;
+  text-align: center;
+  margin-top: 15px;
+}
+
+.down {
+  margin-top: 25px;
+}
+
+.required {
+  color: red;
+  margin-left: 2px;
+}
+
+.error-msg {
+  color: red;
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
+.input-error {
+  border-color: red !important;
+  outline-color: red;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .row, .form-layout {
+    flex-direction: column;
+    gap: 15px;
+  }
+  .modal-box {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .modal-left, .modal-right {
+    flex: none;
+    overflow-y: visible;
+  }
+  .modal-divider {
+    width: 100%;
+    height: 1px;
+    margin: 10px 0;
+  }
+  .product-list-table {
+    display: block;
+    overflow-x: auto;
+  }
+  .page-container {
+    padding: 10px;
+  }
+  .confirm-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .confirm-container.down {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

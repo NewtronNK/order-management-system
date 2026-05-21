@@ -5,7 +5,9 @@ import Register from '../views/RegisterView.vue'
 import Shop from '../views/ShopView.vue'
 import Profile from '../views/ProfileView.vue'
 import OrderView from '../views/OrderView.vue'
-import createOrderView from '../views/createOrderView.vue'
+import DashboardView from '@/views/DashboardView.vue'
+import CustomerListView from '@/views/CustomerListView.vue'
+import createOrderView from '@/views/CreateOrderView.vue'
 import ProductView from '../views/ProductView.vue'
 import InfoView from '../views/InfoView.vue'
 import { useShopStore } from '@/stores/shop'
@@ -43,6 +45,38 @@ const router = createRouter({
       meta: { menuType: 'home' }
     },
     {
+      path: '/shop/:id/dashboard',
+      name: 'shop-dashboard',
+      component: DashboardView,
+      beforeEnter: async (to, from, next) => {
+        const shopStore = useShopStore()
+        const shopId = to.params.id as string
+        await shopStore.setcurrentShop(shopId)
+        if (shopStore.currentShop) {
+          next()
+        } else {
+          next('/home')
+        }
+      },
+      meta: { menuType: 'shop' }
+    },
+    {
+      path: '/shop/:id/customer',
+      name: 'shop-customer',
+      component: CustomerListView,
+      beforeEnter: async (to, from, next) => {
+        const shopStore = useShopStore()
+        const shopId = to.params.id as string
+        await shopStore.setcurrentShop(shopId)
+        if (shopStore.currentShop) {
+          next()
+        } else {
+          next('/home')
+        }
+      },
+      meta: { menuType: 'shop' }
+    },
+    {
       path: '/shop/:id/order',
       name: 'shop-order',
       component: OrderView,
@@ -61,6 +95,22 @@ const router = createRouter({
     {
       path: '/shop/:id/order/create',
       name: 'order-create',
+      component: createOrderView,
+      beforeEnter: async (to, from, next) => {
+        const shopStore = useShopStore()
+        const shopId = to.params.id as string
+        await shopStore.setcurrentShop(shopId)
+        if (shopStore.currentShop) {
+          next()
+        } else {
+          next('/home')
+        }
+      },
+      meta: { menuType: 'shop' }
+    },
+    {
+      path: '/shop/:id/order/edit/:orderId',
+      name: 'order-edit',
       component: createOrderView,
       beforeEnter: async (to, from, next) => {
         const shopStore = useShopStore()

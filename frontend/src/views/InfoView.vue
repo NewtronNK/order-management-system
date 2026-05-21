@@ -3,6 +3,8 @@ import { ref, onMounted, reactive, computed } from 'vue';
 import router from '@/router';
 import { useShopStore } from '@/stores/shop';
 import { useAuthStore } from '@/stores/auth';
+import { initialShopForm, initialErrors } from '../components/utils/forms';
+import { validateShopForm, validateAddressForm } from '../components/utils/validators';
 
 const authStore = useAuthStore();
 const shopStore = useShopStore();
@@ -13,6 +15,7 @@ const isEditing = ref(false);
 const editingAddressId = ref('');
 const checkDefault = ref(false);
 
+// ### reduce duplicate | start
 const defaultAddress = computed(() =>
   shopStore.currentShop?.addresses?.find((a: any) => a.isDefault) ?? null
 );
@@ -21,29 +24,9 @@ const filteredAddresses = computed(() =>
   shopStore.currentShop?.addresses?.filter((a: any) => !a.isDefault) ?? []
 );
 
-const form = reactive({
-  shopName: '',
-  shopDesc: '',
-  email: '',
-  contact: '',
-  businessType: '',
-  addressName: '',
-  province: '',
-  district: '',
-  postcode: '',
-  addressContact: '',
-  addressDetails: ''
-});
-
-const errors = reactive({
-  shopName: '',
-  email: '',
-  addressName: '',
-  province: '',
-  district: '',
-  postcode: '',
-  addressContact: ''
-});
+const form = reactive(initialShopForm());
+const errors = reactive(initialErrors());
+// ### reduce duplicate | end
 
 const cancel = () => {
     // console.log(checkDefault.value)
@@ -66,64 +49,12 @@ const resetForm = () => {
     form.addressContact = '';
     checkDefault.value = false;
 }
+// ### reduce duplicate (validate) | start
+const validateShop = () => validateShopForm(form, errors);
 
-const validateShop = () => {
-  let isValid = true;
-  errors.shopName = '';
-  errors.email = '';
-
-  if (!form.shopName.trim()) {
-    errors.shopName = 'Shop Name is required';
-    isValid = false;
-  }
-  
-  if (!form.email.trim()) {
-    errors.email = 'Email is required';
-    isValid = false;
-  } else if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(form.email)) {
-    errors.email = 'Please enter a valid email address';
-    isValid = false;
-  }
-
-  return isValid;
-};
-
-const validate = () => {
-  let isValid = true;
-  errors.addressName = '';
-  errors.province = '';
-  errors.district = '';
-  errors.postcode = '';
-  errors.addressContact = '';
-
-  if (!form.addressName.trim()) {
-    errors.addressName = 'Address name is required';
-    isValid = false;
-  }
-  if (!form.province.trim()) {
-    errors.province = 'Province is required';
-    isValid = false;
-  }
-  if (!form.district.split(',')[1]?.trim()) {
-    errors.district = 'Subdistrict is required';
-    isValid = false;
-  }
-  if (!form.district.split(',')[0]) {
-    errors.district = 'District is required';
-    isValid = false;
-  }
-  if (!form.postcode.trim()) {
-    errors.postcode = 'Postcode is required';
-    isValid = false;
-  }
-  if (!form.addressContact.trim()) {
-    errors.addressContact = 'Contact is required';
-    isValid = false;
-  }
-
-  return isValid;
-}
-
+const validate = () => validateAddressForm(form, errors);
+// ### reduce duplicate (validate) | end
+// ### maybe reduce between confirm and save function? | start
 const confirm = async () => {
     try {
         if (!validate()) return;
@@ -139,7 +70,7 @@ const confirm = async () => {
             addresses: currentShop.addresses,
         };
 
-        if (checkDefault.value) {
+        if (checkDefault.value && currentShop.addresses.length > 1) {
             payload.addresses = payload.addresses.map((addr: any) =>
                 String(addr._id) === String(defaultAddress.value._id)
                     ? {
@@ -156,7 +87,7 @@ const confirm = async () => {
                 String(addr._id) === String(editingAddressId.value)
                     ? {
                         ...addr,
-                        shopName: form.addressName,
+                        name: form.addressName,
                         detail: form.addressDetails,
                         province: form.province,
                         district: form.district.split(',')[0],
@@ -169,14 +100,14 @@ const confirm = async () => {
             );
         } else {
             payload.addresses.push({
-                shopName: form.addressName,
+                name: form.addressName,
                 detail: form.addressDetails,
                 province: form.province,
                 district: form.district.split(',')[0],
                 subdistrict: form.district.split(',')[1]?.trim(),
                 postcode: form.postcode,
                 contact: form.addressContact,
-                isDefault: checkDefault.value
+                isDefault: checkDefault.value 
             });
         }
 
@@ -205,7 +136,7 @@ const confirm = async () => {
 
 const handleEdit = async (address: any) => {
     isEditing.value = true;
-    form.addressName = address.shopName || '';
+    form.addressName = address.name || '';
     form.addressDetails = address.detail || '';
     form.province = address.province || '';
     form.district = `${address.district}, ${address.subdistrict}` || '';
@@ -229,8 +160,8 @@ const save = async () => {
         
         const payload: any = {
             ownerId: ownerId,
-            name: form.shopName,
-            description: form.shopDesc,
+            name: form.name,
+            description: form.description,
             email: form.email,
             contact: form.contact,
             businessType: form.businessType,
@@ -251,7 +182,7 @@ const save = async () => {
     }
 
 }
-
+// ### maybe reduce between confirm and save function? | end
 
 onMounted(async () => {
   await authStore.checkAuth();
@@ -260,8 +191,8 @@ onMounted(async () => {
   } else {
     // console.log(currentShop.addresses)
     Object.assign(form, {
-    shopName: currentShop.name,       
-    shopDesc: currentShop.description,
+    name: currentShop.name,       
+    description: currentShop.description,
     email: currentShop.email,
     contact: currentShop.contact,
     businessType: currentShop.businessType 
@@ -278,14 +209,14 @@ onMounted(async () => {
             
             <div class="form-group">
                 <label><span class="required">*</span> shop name</label>
-                <input type="text" v-model="form.shopName"
+                <input type="text" v-model="form.name"
                 placeholder="Your Shop Name" />
                 <span class="error-msg" v-if="errors.shopName">{{ errors.shopName }}</span>
             </div>
           
             <div class="form-group">
                 <label><span class="required">*</span> shop description</label>
-                <input type="text" v-model="form.shopDesc" placeholder="Your Shop Description" />
+                <input type="text" v-model="form.description" placeholder="Your Shop Description" />
             </div>
           
             <h3>Contact informations</h3>
@@ -317,7 +248,7 @@ onMounted(async () => {
             <!-- default address -->
             <div class="row" v-if="defaultAddress">
                 <div class="form-group close">
-                    <label>{{ defaultAddress.shopName }} | {{ defaultAddress.contact }}
+                    <label>{{ defaultAddress.name }} | {{ defaultAddress.contact }}
                         <button class="edit-btn" @click="handleEdit(defaultAddress)">edit</button></label>
                     <label>{{ defaultAddress.detail }}, {{ defaultAddress.subdistrict }},
                         {{ defaultAddress.district }}, {{ defaultAddress.province }},
@@ -332,7 +263,7 @@ onMounted(async () => {
             :key="index"
             >
                 <div class="form-group close">
-                    <label>{{ shop.shopName }} | {{ shop.contact }}
+                    <label>{{ shop.name }} | {{ shop.contact }}
                         <!-- @click="handleEditAddress(shop) -->
                         <button class="edit-btn" @click="handleEdit(shop)">edit</button></label>
                     <label>{{ shop.detail }}, {{ shop.subdistrict }},

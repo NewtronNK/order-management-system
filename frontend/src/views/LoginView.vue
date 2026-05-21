@@ -20,9 +20,8 @@ const handleLogin = async () => {
     router.push('/home');
   }
 }
-
 const handleGoogleLogin = async () => {
-  window.location.href = 'http://localhost:3001/api/auth/google';
+  window.location.href = import.meta.env.VITE_GOOGLE_AUTH_URL || 'http://localhost:3001/api/auth/google';
 }
 </script>
 
@@ -30,10 +29,10 @@ const handleGoogleLogin = async () => {
   <div class="login">
     <h1>Welcome to the Login Page</h1>
     <form @submit.prevent="handleLogin">
-      <div class="form-group" label="Username">
+      <div class="form-group2" label="Username">
           <input v-model="loginForm.username" placeholder="Enter your username" :disabled="authStore.loading" />
       </div>
-      <div class="form-group" label="Password">
+      <div class="form-group2" label="Password">
           <input v-model="loginForm.password" placeholder="Enter your password" :disabled="authStore.loading" />
       </div>
       <button 
@@ -56,25 +55,5 @@ const handleGoogleLogin = async () => {
 </template>
 
 <style scoped>
-.login {
-  text-align: center;
-  margin-top: 50px;
-  font-family: sans-serif;
-}
-
-.login-btn {
-  margin-top: 10px;
-}
-
-.form-group {
-  margin-top: 10px;
-}
-
-.login-link {
-  margin-top: 10px;
-}
-
-.google {
-  margin-top: 10px;
-}
+@import "../styles/utils.css";
 </style>

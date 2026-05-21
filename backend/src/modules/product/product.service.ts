@@ -32,47 +32,55 @@ export class ProductService {
       return this.productModel.find({ shopId, isDeleted: { $ne: true } }).exec();
   }
 
-  async findByName(texts: string, shopId?: string) : Promise<Product[] | null> {  
-    if (!texts || texts.trim() === '') {
-      return shopId ? this.findByShop(shopId) : this.findAll();
+  // ลดการใช้ aggregate เนื่องจากสร้างได้จำกัด
+
+  async findByName(texts: string, shopId?: string, categoryId?: string, sortBySoldAmount?: string) : Promise<Product[] | null> {  
+    const query: any = {
+      isDeleted: { $ne: true }
+    };
+
+    if (texts && texts.trim() !== '') {
+      query.name = { $regex: texts, $options: 'i' };
     }
-    
-    const pipeline: any[] = [
-      {
-        $search: {
-          index: 'name',
-          autocomplete: {
-            query: texts,
-            path: 'name'
-          }
-        }
-      }
-    ];
-  
-    pipeline.push({
-      $match: {
-        shopId: shopId,
-        isDeleted: { $ne: true }
-      }
-    });
-    
-    return this.productModel.aggregate(pipeline); // วิธีนี้เร็วที่สุด (Atlas)
+    if (shopId) {
+      query.shopId = shopId;
+    }
+    if (categoryId) {
+      query.category = categoryId;
+    }
+
+    let queryBuilder = this.productModel.find(query);
+
+    if (sortBySoldAmount === 'desc') {
+      queryBuilder = queryBuilder.sort({ soldAmount: -1 });
+    } else if (sortBySoldAmount === 'asc') {
+      queryBuilder = queryBuilder.sort({ soldAmount: 1 });
+    }
+
+    return queryBuilder.exec();
   }
 
   async findByCategory(texts: string) : Promise<Product[] | null> {  
     if (!texts || texts.trim() === '') {
       return this.findAll();
     }
-      return this.productModel.aggregate([{
-        $search: {
-            index: 'default',
-            autocomplete : {
-              query: texts,
-              path: 'category'
-            }
-          }
-      }]); // เดี๋ยวอาจมาได้แก้ เพราะ category เป็น object
-    }
+    return this.productModel.aggregate([
+      {
+        $lookup: {
+          from: 'categories',
+          localField: 'category',
+          foreignField: '_id',
+          as: 'categoryDetails'
+        }
+      },
+      {
+        $match: {
+          isDeleted: { $ne: true },
+          'categoryDetails.name': { $regex: texts, $options: 'i' }
+        }
+      }
+    ]).exec();
+  }
   
   async findByCode(code: string, shopId: string) : Promise<boolean> {
     const result = await this.productModel.findOne({ shopId: shopId, productCode: code, 

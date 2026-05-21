@@ -18,12 +18,16 @@
 }
 
 .create-btn {
-  background: none;
-  border: none;
-  color: #000000;
-  font-size: 1rem;
   cursor: pointer;
-  font-weight: bold;
+    padding: 0.5rem 1.25rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: white;
+    font-weight: 500;
+    text-transform: capitalize;
+    color: #555;
+    font-size: 0.9rem;
+    margin: 0;
 }
 
 .create-btn:hover {
@@ -39,10 +43,21 @@
 .search-input {
   flex: 1;
   max-width: 550px;
+  cursor: pointer;
+    padding: 0.5rem 1.25rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: white;
+    font-weight: 500;
+    text-transform: capitalize;
+    color: #555;
+    font-size: 0.9rem;
+    margin: 0;
 }
 
 .filter-dropdown {
   width: 200px;
+  
 }
 
 .date-input {
@@ -50,21 +65,29 @@
 }
 
 .filters input[type="text"], .filters select, .filters input[type="date"] {
-  padding: 8px;
-  border: 2px solid #000000;
-  border-radius: 4px;
-  outline: none;
-  box-sizing: border-box;
+  cursor: pointer;
+    padding: 0.5rem 1.25rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: white;
+    font-weight: 500;
+    text-transform: capitalize;
+    color: #555;
+    font-size: 0.9rem;
+    margin: 0;
 }
 
 .search-btn {
-  padding: 8px 15px;
-  background-color: white;
-  border: 2px solid #000000;
-  color: #000000;
-  border-radius: 4px;
   cursor: pointer;
-  font-weight: bold;
+    padding: 0.5rem 1.25rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: white;
+    font-weight: 500;
+    text-transform: capitalize;
+    color: #555;
+    font-size: 0.9rem;
+    margin: 0;
 }
 
 .search-btn:hover {
@@ -143,11 +166,16 @@
 }
 
 .edit-btn {
-  border: 1px solid black; 
-  padding: 4px 12px; 
-  font-size: 0.85rem; 
-  cursor: pointer; 
-  border-radius: 4px; 
+  cursor: pointer;
+    padding: 0.5rem 1.25rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: white;
+    font-weight: 500;
+    text-transform: capitalize;
+    color: #555;
+    font-size: 0.9rem;
+    margin: 0;
   display: inline-block;
 }
 
@@ -239,4 +267,40 @@
   color: red;
   font-size: 0.8rem;
   margin-top: 4px;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .page-container {
+    padding: 10px;
+  }
+  .header-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .search-input, .filter-dropdown, .date-input, .filters input, .filters select {
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+  }
+  .data-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .form-layout, .row {
+    flex-direction: column;
+    gap: 15px;
+  }
+  .left-col, .upload-pic {
+    width: 100%;
+  }
+  .modal-content {
+    padding: 15px;
+  }
 }

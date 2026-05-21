@@ -126,3 +126,24 @@
     max-width: 800px;
     margin: 0 auto;
 }
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .profile-container, .change-page {
+    padding: 10px;
+  }
+  .form-layout, .profile-details {
+    padding: 15px;
+  }
+  .row {
+    flex-direction: column;
+    gap: 15px;
+  }
+  .actions, .step-1-actions, .step-2-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .logout-btn {
+    width: 100%;
+  }
+}

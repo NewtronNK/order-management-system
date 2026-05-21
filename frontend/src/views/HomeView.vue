@@ -3,6 +3,7 @@ import { onMounted, reactive, ref } from 'vue';
 import { useAuthStore } from '../stores/auth'
 import { useShopStore } from '../stores/shop'
 import router from '../router';
+import ShopFormModal from '../components/ShopFormModal.vue';
 
 const authStore = useAuthStore();
 const shopStore = useShopStore();
@@ -10,31 +11,7 @@ const shopStore = useShopStore();
 const isEditing = ref(false);
 const isHovering = ref(false);
 const dialogVisible = ref(false);
-
-const form = reactive({
-  shopName: '',
-  shopDesc: '',
-  email: '',
-  contact: '',
-  businessType: '',
-  addressName: '',
-  province: '',
-  district: '',
-  postcode: '',
-  addressContact: '',
-  addressDetails: '',
-  skipAddress: false
-});
-
-const errors = reactive({
-  shopName: '',
-  email: '',
-  addressName: '',
-  province: '',
-  district: '',
-  postcode: '',
-  addressContact: ''
-});
+const shopToEdit = ref<any>(null);
 
 const toggleEdit = () => {
   isEditing.value = !isEditing.value;
@@ -51,79 +28,20 @@ const addShop = () => {
 
 const manageShop = (shopId: string) => {
   router.push({
-    name: 'shop-order',
+    name: 'shop-dashboard',
     params: { id: shopId }
   })
 }
 
-const validate = () => {
-  let isValid = true;
-  errors.shopName = '';
-  errors.email = '';
-
-  if (!form.shopName.trim()) {
-    errors.shopName = 'Shop Name is required';
-    isValid = false;
-  }
-  
-  if (!form.email.trim()) {
-    errors.email = 'Email is required';
-    isValid = false;
-  } else if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(form.email)) {
-    errors.email = 'Please enter a valid email address';
-    isValid = false;
-  }
-
-  return isValid;
+const handleEditShop = (shop: any) => {
+  shopStore.setcurrentShop(shop._id);
+  shopToEdit.value = shop;
+  dialogVisible.value = true;
 };
 
-const handleEditShop = (shop: any) => {
-  shopStore.setcurrentShop(shop._id)
-  Object.assign(form, {
-    shopName: shop.name,       
-    shopDesc: shop.description,
-    email: shop.email,
-    contact: shop.contact,
-    businessType: shop.businessType 
-  });
-  dialogVisible.value  = true
-}
-
-const confirm = async () => {
-  try {
-    if (!validate()) return;
-
-    const ownerId = authStore.user?.userId || authStore.user?._id;
-    if (!ownerId) {
-      alert('User not authenticated');
-      return;
-    }
-
-    const payload: any = {
-      ownerId: ownerId,
-      name: form.shopName,
-      description: form.shopDesc,
-      email: form.email,
-      contact: form.contact,
-      businessType: form.businessType,
-    };
-
-    console.log('Saving shop details', payload);
-    await shopStore.updateShop(payload);
-    dialogVisible.value = false;
-    await shopStore.fetchMyShops();
-
-    } catch (error: any) {
-    console.error('Failed to create shop:', error);
-    const errorMessage = error.response?.data?.message || error.message || 'Failed to create shop.';
-    
-    if (Array.isArray(errorMessage)) {
-      alert(`Validation errors:\n${errorMessage.join('\n')}`);
-    } else {
-      alert(`Error: ${errorMessage}`);
-    }
-  }
-}
+const handleRefresh = async () => {
+  await shopStore.fetchMyShops();
+};
 
 onMounted(async () => {
   await authStore.checkAuth();
@@ -166,7 +84,7 @@ onMounted(async () => {
             class="shop-box" @mouseenter="isHovering = true" @mouseleave="isHovering = false"
           >
             <span v-if="!isHovering" class="shop-name">{{ shop.name }}</span>
-            <button v-if="isHovering" @click="handleEditShop(shop)">edit informations</button>
+            <button v-if="isHovering" @click="handleEditShop(shop)" class="action-btn">edit informations</button>
         </div>
         
         </div>
@@ -187,54 +105,12 @@ onMounted(async () => {
   </div>
 
   <div class="shop-page">
-    <div v-if="dialogVisible" class="form-overlay step-content">
-      <div class="form-layout">
-        <div class="right-col">
-          <h3>Informations</h3>
-          
-          <div class="form-group">
-            <label>Shop Name <span class="required">*</span></label>
-            <input type="text" v-model="form.shopName" :class="{ 'input-error': errors.shopName }" 
-            placeholder="Your Shop Name" />
-            <span class="error-msg" v-if="errors.shopName">{{ errors.shopName }}</span>
-          </div>
-          
-          <div class="form-group">
-            <label>shop Desc</label>
-            <input type="text" v-model="form.shopDesc" placeholder="Your Shop Description" />
-          </div>
-          
-          <h3>contact informations</h3>
-          <div class="row">
-            <div class="form-group half">
-              <label>email <span class="required">*</span></label>
-              <input type="email" v-model="form.email" :class="{ 'input-error': errors.email }" 
-              placeholder="oms@example.com"/>
-              <span class="error-msg" v-if="errors.email">{{ errors.email }}</span>
-            </div>
-            <div class="form-group half">
-              <label>contact</label>
-              <input type="text" v-model="form.contact" placeholder="ex. 0812345679" />
-            </div>
-          </div>
-          
-          <div class="form-group">
-            <label>Bussiness type</label>
-            <select v-model="form.businessType">
-              <option value="" disabled>Select Type</option>
-              <option value="retail">Retail</option>
-              <option value="foodAndBeverage">Food & Beverage</option>
-              <option value="specialty">Specialty</option>
-              <option value="service">Service</option>
-            </select>
-          </div>
-          <div class="actions step-1-actions">
-            <button class="btn" @click="dialogVisible = false">cancel</button>
-            <button class="btn" @click="confirm">confirm</button>
-          </div>
-        </div> 
-      </div>
-    </div>
+    <ShopFormModal 
+      :isVisible="dialogVisible"
+      :shopToEdit="shopToEdit"
+      @close="dialogVisible = false"
+      @refresh="handleRefresh"
+    />
   </div>
 </template>
 

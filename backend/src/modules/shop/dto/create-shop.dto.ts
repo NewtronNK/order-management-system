@@ -3,7 +3,7 @@ import { IsBoolean, IsMongoId, IsNotEmpty, IsOptional, IsString } from "class-va
 class Address {
     @IsOptional()
     @IsString()
-    readonly shopName?: string;
+    readonly name?: string;
 
     @IsOptional()
     @IsString()

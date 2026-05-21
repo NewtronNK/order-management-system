@@ -1,10 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ControllerWithGuard } from '../auth/controller-with-guard.decorator';
 
-@Controller('order')
+@ControllerWithGuard('order')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
@@ -18,10 +26,33 @@ export class OrderController {
     return this.orderService.findAll();
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('shop/:shopId')
   findByShop(@Param('shopId') shopId: string) {
     return this.orderService.findByShop(shopId);
+  }
+
+  @Get('search')
+  searchOrder(
+    @Query()
+    query: {
+      text?: string;
+      shopId?: string;
+      startDate?: string;
+      endDate?: string;
+      status?: string;
+    },
+  ) {
+    return this.orderService.findByOrder(query);
+  }
+
+  @Get('filter')
+  filterOrder(@Query('status') text: string, @Query('shopId') shopId: string) {
+    return this.orderService.filterOrder(text, shopId);
+  }
+
+  @Patch('remove')
+  removeOrders(@Body('ids') ids: string[]) {
+    return this.orderService.removeOrders(ids);
   }
 
   @Get(':id')
@@ -29,14 +60,8 @@ export class OrderController {
     return this.orderService.findOne(id);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Patch(':id')
-    update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-      return this.orderService.update(id, updateOrderDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.orderService.remove(id);
+  update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
+    return this.orderService.update(id, updateOrderDto);
   }
 }

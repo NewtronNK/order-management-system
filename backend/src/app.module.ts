@@ -9,10 +9,11 @@ import { OrderModule } from './modules/order/order.module';
 import { CategoryModule } from './modules/category/category.module';
 import { ProductModule } from './modules/product/product.module';
 import { AuthModule } from './modules/auth/auth.module';
-
+import { CustomerModule } from './modules/customer/customer.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({
+  imports: [
+    ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
     }),
@@ -20,11 +21,17 @@ import { AuthModule } from './modules/auth/auth.module';
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGODB_URI'), 
+        uri: configService.get<string>('MONGODB_URI'),
       }),
       inject: [ConfigService],
-    }), 
-    UserModule, ShopModule, ProductModule, OrderModule, CategoryModule, AuthModule
+    }),
+    UserModule,
+    ShopModule,
+    ProductModule,
+    OrderModule,
+    CategoryModule,
+    AuthModule,
+    CustomerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

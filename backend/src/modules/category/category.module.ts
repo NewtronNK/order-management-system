@@ -7,16 +7,16 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
-        MongooseModule.forFeature([
-          {
-          name: Category.name,
-          schema: CategorySchema,
-          },
-        ]),
-      ShopModule
-    ],
+    MongooseModule.forFeature([
+      {
+        name: Category.name,
+        schema: CategorySchema,
+      },
+    ]),
+    ShopModule,
+  ],
   controllers: [CategoryController],
   providers: [CategoryService],
-  exports: [CategoryService]
+  exports: [CategoryService],
 })
 export class CategoryModule {}

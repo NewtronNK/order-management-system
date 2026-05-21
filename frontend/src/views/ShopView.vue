@@ -3,37 +3,16 @@ import { ref, reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import { useShopStore } from '../stores/shop';
+import { initialShopForm, initialErrors } from '../components/utils/forms';
+import { validateShopForm, validateAddressForm } from '../components/utils/validators';
 
 const router = useRouter();
 const authStore = useAuthStore();
 const shopStore = useShopStore();
 
 const step = ref(1);
-
-const form = reactive({
-  shopName: '',
-  shopDesc: '',
-  email: '',
-  contact: '',
-  businessType: '',
-  addressName: '',
-  province: '',
-  district: '',
-  postcode: '',
-  addressContact: '',
-  addressDetails: '',
-  skipAddress: false
-});
-
-const errors = reactive({
-  shopName: '',
-  email: '',
-  addressName: '',
-  province: '',
-  district: '',
-  postcode: '',
-  addressContact: ''
-});
+const form = reactive(initialShopForm());
+const errors = reactive(initialErrors());
 
 onMounted(async () => {
   if (!authStore.isAuthenticated) {
@@ -41,63 +20,11 @@ onMounted(async () => {
   }
 });
 
-const validateStep1 = () => {
-  let isValid = true;
-  errors.shopName = '';
-  errors.email = '';
-
-  if (!form.shopName.trim()) {
-    errors.shopName = 'Shop Name is required';
-    isValid = false;
-  }
-  
-  if (!form.email.trim()) {
-    errors.email = 'Email is required';
-    isValid = false;
-  } else if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(form.email)) {
-    errors.email = 'Please enter a valid email address';
-    isValid = false;
-  }
-
-  return isValid;
-};
+const validateStep1 = () => validateShopForm(form, errors);
 
 const validateStep2 = () => {
   if (form.skipAddress) return true;
-
-  let isValid = true;
-  errors.addressName = '';
-  errors.province = '';
-  errors.district = '';
-  errors.postcode = '';
-  errors.addressContact = '';
-
-  if (!form.addressName.trim()) {
-    errors.addressName = 'Address name is required';
-    isValid = false;
-  }
-  if (!form.province.trim()) {
-    errors.province = 'Province is required';
-    isValid = false;
-  }
-  if (!form.district.split(',')[1]?.trim()) {
-    errors.district = 'Sub District is required';
-    isValid = false;
-  }
-  if (!form.district.split(',')[0]) {
-    errors.district = 'District is required';
-    isValid = false;
-  }
-  if (!form.postcode.trim()) {
-    errors.postcode = 'Postcode is required';
-    isValid = false;
-  }
-  if (!form.addressContact.trim()) {
-    errors.addressContact = 'Contact is required';
-    isValid = false;
-  }
-
-  return isValid;
+  return validateAddressForm(form, errors);
 };
 
 const nextStep = () => {
@@ -126,8 +53,8 @@ const confirm = async () => {
 
     const payload: any = {
       ownerId: ownerId,
-      name: form.shopName,
-      description: form.shopDesc,
+      name: form.name,
+      description: form.description,
       email: form.email,
       contact: form.contact,
       businessType: form.businessType,
@@ -135,7 +62,7 @@ const confirm = async () => {
 
     if (!form.skipAddress) {
       payload.addresses = [{
-        shopName: form.addressName,
+        name: form.addressName,
         detail: form.addressDetails,
         province: form.province,
         district: form.district.split(',')[0],
@@ -179,16 +106,16 @@ const confirm = async () => {
         <div class="right-col">
           <h3>Informations</h3>
           
-          <div class="form-group">
+            <div class="form-group">
             <label>Shop Name <span class="required">*</span></label>
-            <input type="text" v-model="form.shopName" :class="{ 'input-error': errors.shopName }" 
+            <input type="text" v-model="form.name" :class="{ 'input-error': errors.shopName }" 
             placeholder="Your Shop Name" />
             <span class="error-msg" v-if="errors.shopName">{{ errors.shopName }}</span>
           </div>
           
           <div class="form-group">
             <label>shop Desc</label>
-            <input type="text" v-model="form.shopDesc" placeholder="Your Shop Description" />
+            <input type="text" v-model="form.description" placeholder="Your Shop Description" />
           </div>
           
           <h3>contact informations</h3>

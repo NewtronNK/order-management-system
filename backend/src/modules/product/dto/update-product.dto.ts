@@ -2,7 +2,7 @@ import { IsBoolean, IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString } from
 
 
 export class UpdateProductDto {
-    @IsNotEmpty()
+    @IsOptional()
     @IsMongoId()
     readonly shopId: string; 
     

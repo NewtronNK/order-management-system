@@ -2,6 +2,8 @@
 import { ref, onMounted, reactive } from 'vue';
 import { useAuthStore } from "../stores/auth";
 import router from '@/router';
+import { initialPasswordForm, initialNameForm } from '../components/utils/forms';
+import { validateChangePassword } from '../components/utils/validators';
 
 const authStore = useAuthStore();
 
@@ -9,12 +11,8 @@ const dialogVisible = ref(false);
 const dialogVisibleName = ref(false);
 const isLoggedIn = ref(false)
 const userProfile = ref<{ username: string; name: string, _id: string } | null>(null)
-const havePassword = ref<{ havePassword: boolean; } | null>(null)
-
-const passwordForm = reactive({
-  oldPassword: '',
-  newPassword: ''
-});
+const havePassword = ref(false);
+const passwordForm = reactive(initialPasswordForm());
 
 const errors = reactive({
   oldPassword: '',
@@ -22,37 +20,15 @@ const errors = reactive({
   newName: ''
 });
 
-const nameForm = reactive({
-  // password: '',
-  newName: ''
-});
+const nameForm = reactive(initialNameForm());
 
 const handleLogout = async () => {
     await authStore.logout();
     router.push('/login');
-    // console.log(authStore2.user._id);
 }
 
-const validateChangePassword = () => {
-  let isValid = true;
-  errors.oldPassword = '';
-  errors.newPassword = '';
-
-  if (!passwordForm.oldPassword.trim()) {
-    errors.oldPassword = 'Please enter your old password';
-    isValid = false;
-  }
-
-  if (!passwordForm.newPassword.trim()) {
-    errors.newPassword = 'Please enter your new password';
-    isValid = false;
-  }
-  
-  return isValid;
-};
-
 const changePassword = async () => {
-  if (!validateChangePassword()) return;
+  if (!validateChangePassword(passwordForm, errors)) return;
 
   try {
     const ownerId = authStore.user?.userId || authStore.user?._id;
@@ -120,8 +96,11 @@ onMounted(async () => {
   } else {
     userProfile.value = authStore.user
     isLoggedIn.value = true
-    // console.log(authStore.user.havePassword)
-    havePassword.value = authStore.user.havePassword
+    // console.log(userProfile.value)
+    if (authStore.user.password) {
+      havePassword.value = true
+    }
+      
   }
 });
 </script>
@@ -170,8 +149,6 @@ onMounted(async () => {
               <span class="error-msg" v-if="errors.newName">{{  errors.newName  }}</span>
             </div>
         </p>
-        <p v-if="!havePassword" class="action-link" @click="dialogVisible = true">
-          Create new Password</p>
         <p v-if="havePassword" class="action-link" @click="dialogVisible = true">
           Change the Password</p>
         <button @click="handleLogout" class="logout-btn">Logout</button>
